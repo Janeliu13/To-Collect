@@ -95,20 +95,38 @@ export default function ChatroomPage() {
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.id})`)
       .order('created_at', { ascending: true });
     
-    if (data) {
-      const loadedMessages = data.map(msg => ({
-        id: msg.id,
-        type: msg.message_type,
-        text: msg.message_text,
-        imageUrl: msg.image_url,
-        username: msg.sender_id === user.id ? profile?.username : otherUser?.username,
-        avatarUrl: msg.sender_id === user.id ? profile?.avatar_url : otherUser?.avatar_url,
-        timestamp: new Date(msg.created_at),
-        isOwn: msg.sender_id === user.id
-      }));
+    if (data && data.length > 0) {
+      // Get all unique sender IDs
+      const senderIds = [...new Set(data.map(msg => msg.sender_id))];
+      
+      // Fetch user details for all senders
+      const { data: senders } = await supabase
+        .from('users_ext')
+        .select('id, username, avatar_url')
+        .in('id', senderIds);
+      
+      // Create a map of user details
+      const userMap = new Map();
+      if (senders) {
+        senders.forEach(s => userMap.set(s.id, s));
+      }
+      
+      const loadedMessages = data.map(msg => {
+        const sender = userMap.get(msg.sender_id);
+        return {
+          id: msg.id,
+          type: msg.message_type,
+          text: msg.message_text,
+          imageUrl: msg.image_url,
+          username: sender?.username || 'Unknown',
+          avatarUrl: sender?.avatar_url,
+          timestamp: new Date(msg.created_at),
+          isOwn: msg.sender_id === user.id
+        };
+      });
       setMessages(loadedMessages);
     }
-  }, [user, userId, profile, otherUser]);
+  }, [user, userId]);
 
   // Load existing messages between current user and other user
   useEffect(() => {
@@ -130,7 +148,7 @@ export default function ChatroomPage() {
           schema: 'public',
           table: 'messages'
         },
-        (payload) => {
+        async (payload) => {
           console.log('Received realtime message:', payload);
           const newMsg = payload.new;
           
@@ -145,37 +163,49 @@ export default function ChatroomPage() {
           }
           
           // Check if message already exists in state (to avoid duplicates)
-          setMessages((prev) => {
-            if (prev.some(m => m.id === newMsg.id)) {
-              console.log('Message already exists, skipping');
+          const messageExists = await new Promise((resolve) => {
+            setMessages((prev) => {
+              resolve(prev.some(m => m.id === newMsg.id));
               return prev;
-            }
-            
-            const isOwn = newMsg.sender_id === user.id;
-            const formattedMsg = {
-              id: newMsg.id,
-              type: newMsg.message_type,
-              text: newMsg.message_text,
-              imageUrl: newMsg.image_url,
-              username: isOwn ? profile?.username : otherUser?.username,
-              avatarUrl: isOwn ? profile?.avatar_url : otherUser?.avatar_url,
-              timestamp: new Date(newMsg.created_at),
-              isOwn
-            };
-            
-            console.log('Adding new message to state:', formattedMsg);
-            
-            // Mark as read if it's from the other user
-            if (!isOwn) {
-              supabase
-                .from('messages')
-                .update({ read: true })
-                .eq('id', newMsg.id)
-                .then();
-            }
-            
-            return [...prev, formattedMsg];
+            });
           });
+          
+          if (messageExists) {
+            console.log('Message already exists, skipping');
+            return;
+          }
+          
+          // Fetch sender details to ensure we have correct avatar/username
+          const { data: sender } = await supabase
+            .from('users_ext')
+            .select('username, avatar_url')
+            .eq('id', newMsg.sender_id)
+            .single();
+          
+          const isOwn = newMsg.sender_id === user.id;
+          const formattedMsg = {
+            id: newMsg.id,
+            type: newMsg.message_type,
+            text: newMsg.message_text,
+            imageUrl: newMsg.image_url,
+            username: sender?.username || 'Unknown',
+            avatarUrl: sender?.avatar_url,
+            timestamp: new Date(newMsg.created_at),
+            isOwn
+          };
+          
+          console.log('Adding new message to state:', formattedMsg);
+          
+          setMessages((prev) => [...prev, formattedMsg]);
+          
+          // Mark as read if it's from the other user
+          if (!isOwn) {
+            supabase
+              .from('messages')
+              .update({ read: true })
+              .eq('id', newMsg.id)
+              .then();
+          }
         }
       )
       .subscribe((status) => {
@@ -186,7 +216,7 @@ export default function ChatroomPage() {
       console.log('Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
-  }, [user?.id, userId, otherUser, profile]);
+  }, [user?.id, userId]);
 
   // Mark messages as read when viewing this chat
   useEffect(() => {
