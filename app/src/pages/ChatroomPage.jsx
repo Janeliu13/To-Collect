@@ -270,21 +270,28 @@ export default function ChatroomPage() {
     const text = message.trim();
     if (!text || !user?.id || !userId) return;
     
-    // Save message to database - real-time subscription will handle adding it to state
-    const { error } = await supabase
+    console.log('Sending message:', text);
+    
+    // Save message to database
+    const { data, error } = await supabase
       .from('messages')
       .insert({
         sender_id: user.id,
         receiver_id: userId,
         message_text: text,
         message_type: 'text'
-      });
+      })
+      .select()
+      .single();
     
     if (error) {
       console.error('Error sending message:', error);
       return;
     }
     
+    console.log('Message saved to database:', data);
+    
+    // Clear input - realtime subscription will add message to state
     setMessage('');
   };
 
