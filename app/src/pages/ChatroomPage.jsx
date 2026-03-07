@@ -115,6 +115,50 @@ export default function ChatroomPage() {
     loadMessages();
   }, [loadMessages]);
 
+  // Real-time subscription for new messages
+  useEffect(() => {
+    if (!user?.id || !userId) return;
+
+    const channel = supabase
+      .channel(`chatroom:${user.id}:${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${userId},receiver_id=eq.${user.id}`
+        },
+        (payload) => {
+          // When other user sends a message, add it to the list
+          const newMsg = payload.new;
+          const formattedMsg = {
+            id: newMsg.id,
+            type: newMsg.message_type,
+            text: newMsg.message_text,
+            imageUrl: newMsg.image_url,
+            username: otherUser?.username,
+            avatarUrl: otherUser?.avatar_url,
+            timestamp: new Date(newMsg.created_at),
+            isOwn: false
+          };
+          setMessages((prev) => [...prev, formattedMsg]);
+          
+          // Mark as read immediately
+          supabase
+            .from('messages')
+            .update({ read: true })
+            .eq('id', newMsg.id)
+            .then();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, userId, otherUser]);
+
   // Mark messages as read when viewing this chat
   useEffect(() => {
     if (!user?.id || !userId) return;
