@@ -291,7 +291,17 @@ export default function ChatroomPage() {
     
     console.log('Message saved to database:', data);
     
-    // Clear input - realtime subscription will add message to state
+    // Immediately add message to local state for instant display
+    const newMessage = {
+      id: data.id,
+      type: 'text',
+      text,
+      username: profile?.username || 'You',
+      avatarUrl: profile?.avatar_url,
+      timestamp: new Date(data.created_at),
+      isOwn: true
+    };
+    setMessages((prev) => [...prev, newMessage]);
     setMessage('');
   };
 
