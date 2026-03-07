@@ -1,0 +1,10 @@
+# Supabase 项目配置（用于 CLI 部署）
+# 详见 https://supabase.com/docs/guides/functions/function-configuration
+
+[functions.generate-avatar]
+# 关闭 JWT 校验，避免前端调用时 401；仅头像生成接口，仍由前端保证登录态
+verify_jwt = false
+
+[functions.remove-background]
+# 关闭 JWT 校验，与 generate-avatar 保持一致；登录态由前端保证
+verify_jwt = false

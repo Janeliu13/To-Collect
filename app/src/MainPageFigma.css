@@ -1,0 +1,890 @@
+/* Figma main page: pastel layout, nav, grid, sidebars.
+   All dimensions/positions from Figma use frame 7866×5263:
+   width/x → calc(100vw * value / 7866), height/y → calc(100vh * value / 5263).
+   See docs/FIGMA_TO_SITE_RATIO.md. */
+
+.main-page-figma {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #b8d4e8 url('/assets/main-bg.png') center top / cover no-repeat;
+  background-attachment: scroll;
+}
+
+.main-page-lace {
+  height: 24px;
+  background: linear-gradient(90deg, #fff 0%, #fef 50%, #fff 100%);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 0 rgba(200, 180, 220, 0.3);
+}
+
+.main-page-header {
+  background: linear-gradient(180deg, #b8d4e8 0%, #c8dcf0 100%);
+  padding: 0.5rem 1.5rem 0;
+  position: relative;
+}
+
+.main-page-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.main-page-title {
+  margin: 0;
+  font-family: 'Dancing Script', 'Segoe Script', cursive;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 600;
+  color: #c4b0d8;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.main-page-title-star {
+  color: #f5e88c;
+  margin: 0 0.15em;
+  font-size: 0.9em;
+}
+
+.main-page-green-bar {
+  height: 12px;
+  background: #b8e088;
+  border-radius: 0 0 2px 2px;
+}
+
+.main-page-body {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  max-width: 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Left vertical panel: objects A–Z — scaled from Figma frame 7866×5263 */
+.main-page-left-az {
+  position: absolute;
+  left: calc(100vw * 161 / 7866);
+  top: calc(100vh * 1534 / 5263);
+  width: calc(100vw * 1307 / 7866);
+  height: calc(100vh * 3600 / 5263);
+  flex-shrink: 0;
+  background: rgba(225, 173, 240, 0.5);
+  border-radius: 2px;
+  z-index: 0;
+}
+
+/* Objects A-Z rectangle: same size as gallery buttons, centered in vertical purple bar (161 + 1307/2) */
+.main-page-rect-top {
+  position: absolute;
+  left: calc(100vw * (161 + 1307 / 2) / 7866);
+  top: calc(100vh * 1724 / 5263);
+  transform: translateX(-50%);
+  min-width: 160px;
+  width: max-content;
+  height: 36px;
+  padding: 0 1.2rem;
+  background: #d4edf4;
+  border-radius: 2px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-page-rect-top-text {
+  font-family: Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f5a4c6;
+  white-space: nowrap;
+}
+
+/* Background box for category labels */
+.main-page-categories-bg-box {
+  position: absolute;
+  left: calc(100vw * (161 + 1307 / 2) / 7866);
+  top: calc(100vh * 1724 / 5263 + 36px + 0.75rem);
+  transform: translateX(-50%);
+  min-width: 160px;
+  width: max-content;
+  height: 54vh;
+  padding: 0 1.2rem;
+  background: #D4EDF4;
+  border-radius: 2px;
+  z-index: 5;
+}
+
+/* Object labels list under "objects A - Z": blue underlined links, shifted toward center */
+.main-page-object-labels-list {
+  position: absolute;
+  left: calc(100vw * (161 + 1307 / 2) / 7866);
+  top: calc(100vh * 1724 / 5263 + 36px + 0.75rem);
+  transform: translateX(-50%);
+  min-width: 160px;
+  width: max-content;
+  height: 54vh;
+  max-height: 54vh;
+  padding: 0.5rem 1.2rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Custom scrollbar for category list */
+.main-page-object-labels-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-page-object-labels-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-page-object-labels-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+}
+
+.main-page-object-labels-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.main-page-object-label-link {
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6EDCFF;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  background: none;
+  border: none;
+  transition: color 0.2s ease, font-weight 0.2s ease, background-color 0.2s ease;
+  padding: 0;
+  align-self: flex-start;
+  pointer-events: auto;
+  position: relative;
+}
+
+nav.main-page-object-labels-list a.main-page-object-label-link:hover,
+nav.main-page-object-labels-list a.main-page-object-label-link:focus,
+.main-page-object-labels-list .main-page-object-label-link:hover,
+.main-page-object-labels-list .main-page-object-label-link:focus,
+a.main-page-object-label-link:hover,
+a.main-page-object-label-link:focus,
+.main-page-object-label-link:hover,
+.main-page-object-label-link:focus {
+  color: #F5A4C6 !important;
+  font-weight: 700 !important;
+  text-decoration: underline !important;
+}
+
+nav.main-page-object-labels-list a.main-page-object-label-link.active,
+.main-page-object-labels-list .main-page-object-label-link.active,
+a.main-page-object-label-link.active,
+.main-page-object-label-link.active {
+  font-weight: 700 !important;
+  color: #F5A4C6 !important;
+  text-decoration: underline !important;
+}
+
+/* Second purple rectangle: gallery display area (W 4321, H 3600, X 1572, Y 1534) */
+.main-page-rect-right {
+  position: absolute;
+  left: calc(100vw * 1572 / 7866);
+  top: calc(100vh * 1534 / 5263);
+  width: calc(100vw * 4321 / 7866);
+  height: calc(100vh * 3600 / 5263);
+  background: rgba(225, 173, 240, 0.5);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0.75rem;
+  overflow: auto;
+  z-index: 1;
+}
+
+.main-page-rect-right .main-page-nav-buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: calc(100vw * 48 / 7866);
+  margin-top: calc(100vh * 190 / 5263);
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.main-page-rect-right {
+  padding-top: 0;
+}
+
+.main-page-rect-right .main-nav-btn {
+  min-width: 160px;
+  height: 36px;
+  padding: 0 1.2rem;
+  border-radius: 2px;
+  border: none;
+  font-family: Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f5a4c6;
+  background: #d4edf4;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  transition: filter 0.15s;
+}
+
+.main-page-rect-right .main-nav-btn:hover:not(:disabled) {
+  background: #B8DCE8;
+  text-decoration: none;
+  color: #E888B0;
+  font-weight: 700;
+}
+
+.main-page-rect-right .main-nav-btn.active {
+  background: #B8DCE8;
+  color: #E888B0;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.main-nav-btn:disabled {
+  cursor: default;
+  opacity: 0.9;
+}
+
+.main-page-outlet {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* 8 columns × 5 rows: each cell is a slot for an uploaded object’s image (user-uploaded objects) */
+.main-page-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-auto-rows: auto;
+  gap: 0.5rem;
+  min-height: min(400px, 50vh);
+  flex-shrink: 0;
+}
+
+/* Extra row spacing only for user gallery to accommodate usernames */
+.main-page-gallery-grid.user-gallery-mode {
+  row-gap: 2.5rem;
+}
+
+/* Placeholder for one object image per cell; background when empty */
+.main-page-gallery-grid-cell {
+  aspect-ratio: 1;
+  background: #d4edf4;
+  border-radius: 2px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+/* In user gallery mode, allow overflow for username */
+.main-page-gallery-grid.user-gallery-mode .main-page-gallery-grid-cell {
+  overflow: visible;
+}
+
+.main-page-gallery-grid-cell-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  text-decoration: none;
+}
+
+/* Empty cell: clickable, goes to object view page (same background, no content) */
+.main-page-gallery-grid-cell-empty-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+  background: #d4edf4;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: filter 0.15s;
+}
+
+.main-page-gallery-grid-cell-empty-link:hover {
+  filter: brightness(0.96);
+}
+
+.main-page-gallery-grid-cell-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+  padding: 8%;
+  box-sizing: border-box;
+  background: #d4edf4;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.main-page-gallery-grid-cell-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #F5A4C6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.main-page-gallery-grid-cell-username {
+  font-family: Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #fff;
+  text-align: center;
+  text-decoration: underline;
+  margin-top: 0.25rem;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.main-page-gallery-grid-cell-empty {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #d4edf4;
+  border-radius: 2px;
+}
+
+/* Log out button: just above neon green line in background, #F5A4C6 */
+.main-page-logout-btn {
+  position: fixed;
+  top: 5.5rem;
+  right: 1rem;
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #F5A4C6;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.main-page-logout-btn:hover {
+  filter: brightness(0.96);
+}
+
+/* Two right side panels only: equal height (1760), 80px gap, bottom ends at 5134 */
+.main-page-rect-panel-top {
+  position: absolute;
+  left: calc(100vw * 6069 / 7866);
+  width: calc(100vw * 1624 / 7866);
+  height: calc(100vh * 1760 / 5263);
+  top: calc(100vh * 1534 / 5263);
+  background: rgba(225, 173, 240, 0.5);
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1rem;
+  z-index: 2;
+}
+
+.main-page-rect-panel-top-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding-top: 0.25rem;
+}
+
+/* Rectangle in top right panel: shows logged-in user’s username, color #F5A4C6 */
+/* Username text in top right panel */
+.main-page-rect-panel-top-username-text {
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  text-align: center;
+}
+
+/* Logged-in user’s avatar under username in top right panel */
+.main-page-rect-panel-top-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 2px;
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.main-page-rect-panel-top-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.main-page-rect-panel-top-avatar-placeholder {
+  font-family: Arial, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Pink “my profile” button under avatar in top right panel */
+.main-page-rect-panel-top-profile-btn {
+  min-width: 150px;
+  height: 34px;
+  padding: 0 1.1rem;
+  background: #f5a4c6;
+  border-radius: 2px;
+  border: none;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: filter 0.15s;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.main-page-rect-panel-top-profile-btn:hover {
+  filter: brightness(0.96);
+  color: #fff;
+  text-decoration: none;
+}
+
+.main-page-rect-panel-top-profile-btn.active {
+  background: #e893b5;
+  color: #fff;
+  text-decoration: none;
+}
+
+.main-page-rect-panel-bottom {
+  position: absolute;
+  left: calc(100vw * 6069 / 7866);
+  width: calc(100vw * 1624 / 7866);
+  height: calc(100vh * 1760 / 5263);
+  top: calc(100vh * (1534 + 1760 + 80) / 5263); /* below top + 80px gap */
+  background: rgba(225, 173, 240, 0.5);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Yellow box in bottom right panel: usernames of user's most recent chats; #FBEC91 */
+.main-page-rect-panel-bottom-yellow-box {
+  position: absolute;
+  left: calc(100vw * (6069 + 1624 / 2) / 7866);
+  top: calc(100vh * 3580 / 5263);
+  transform: translateX(-50%);
+  width: calc(100vw * 1000 / 7866);
+  height: calc(100vh * 1100 / 5263);
+  background: #fbec91;
+  border-radius: 2px;
+  z-index: 1;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.main-page-messages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #F5A4C6;
+  flex-shrink: 0;
+}
+
+.main-page-messages-title {
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #F5A4C6;
+}
+
+.main-page-message-count-badge {
+  flex-shrink: 0;
+  background: #F5A4C6;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.35rem;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+  display: inline-block;
+}
+
+.main-page-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.main-page-message-item {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.2s;
+  align-items: center;
+}
+
+.main-page-message-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.main-page-message-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #6EDCFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-page-message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.main-page-message-avatar-placeholder {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-family: Arial, sans-serif;
+}
+
+.main-page-message-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.main-page-message-username {
+  font-family: Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #3EC9E0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.main-page-message-preview {
+  font-family: Arial, sans-serif;
+  font-size: 0.7rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.main-page-messages-empty {
+  text-align: center;
+  color: #999;
+  font-family: Arial, sans-serif;
+  font-size: 0.75rem;
+  padding: 0.75rem;
+}
+
+/* Button in bottom right panel: #F29606, same size as "my profile" button (160×36), centered in panel */
+.main-page-rect-panel-bottom-btn {
+  position: absolute;
+  left: calc(100vw * (6069 + 1624 / 2) / 7866);
+  top: calc(100vh * 4780 / 5263);
+  transform: translateX(-50%);
+  min-width: 160px;
+  width: max-content;
+  height: 36px;
+  padding: 0 1.2rem;
+  background: #f29606;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  z-index: 1;
+  font-family: Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-page-rect-panel-bottom-btn:hover {
+  filter: brightness(1.05);
+}
+
+.main-page-rect-panel-bottom-btn:active {
+  filter: brightness(0.95);
+}
+
+/* Right sidebar: right of the two side panels (6069 + 1624 = 7693) */
+.main-page-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  margin-left: calc(100vw * (6069 + 1624) / 7866 + 0.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sidebar-username-box {
+  padding: 0.6rem 0.9rem;
+  border-radius: 2px;
+  background: #e8c8d0;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.sidebar-avatar-box {
+  aspect-ratio: 1;
+  max-width: 100%;
+  border-radius: 2px;
+  background: #f5e88c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sidebar-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-avatar-placeholder {
+  font-size: 0.75rem;
+  color: #333;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.sidebar-btn {
+  padding: 0.6rem 0.9rem;
+  border-radius: 2px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.sidebar-btn:hover {
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.sidebar-btn-profile {
+  background: #e8c8d0;
+  color: #fff;
+}
+
+.sidebar-btn-profile.active {
+  background: #d8b0c0;
+  color: #fff;
+}
+
+.sidebar-btn-chatroom {
+  background: #e8a050;
+  color: #fff;
+}
+
+.sidebar-btn-chatroom:hover {
+  color: #fff;
+}
+
+.sidebar-new-chats {
+  padding: 0.75rem 0.9rem;
+  border-radius: 2px;
+  background: #f5e88c;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.sidebar-new-chats-title {
+  display: block;
+  font-weight: 600;
+}
+
+.sidebar-new-chats-sub {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.35rem;
+}
+
+.sidebar-new-chats-list {
+  margin: 0;
+  padding-left: 1rem;
+  list-style: none;
+}
+
+.sidebar-new-chats-list li {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.sidebar-logout-text {
+  margin-top: auto;
+  padding: 0.4rem 0;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.sidebar-logout-text:hover {
+  color: #333;
+}
+
+/* Grid of blue squares */
+.main-gallery-grid-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 360px;
+}
+
+.main-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.main-gallery-cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(150, 190, 220, 0.55);
+  transition: background 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-gallery-cell:hover {
+  background: rgba(130, 170, 210, 0.75);
+  transform: scale(1.02);
+}
+
+.main-gallery-cell-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.main-gallery-cell-placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.main-gallery-cell-username {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.main-gallery-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.95rem;
+}
+
