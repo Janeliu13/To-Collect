@@ -119,6 +119,8 @@ export default function ChatroomPage() {
   useEffect(() => {
     if (!user?.id || !userId) return;
 
+    console.log('Setting up realtime subscription for chat:', user.id, userId);
+
     const channel = supabase
       .channel(`chatroom:${user.id}:${userId}`)
       .on(
@@ -129,6 +131,7 @@ export default function ChatroomPage() {
           table: 'messages'
         },
         (payload) => {
+          console.log('Received realtime message:', payload);
           const newMsg = payload.new;
           
           // Only process messages relevant to this conversation
@@ -136,11 +139,15 @@ export default function ChatroomPage() {
             (newMsg.sender_id === user.id && newMsg.receiver_id === userId) ||
             (newMsg.sender_id === userId && newMsg.receiver_id === user.id);
           
-          if (!isRelevant) return;
+          if (!isRelevant) {
+            console.log('Message not relevant to this chat');
+            return;
+          }
           
           // Check if message already exists in state (to avoid duplicates)
           setMessages((prev) => {
             if (prev.some(m => m.id === newMsg.id)) {
+              console.log('Message already exists, skipping');
               return prev;
             }
             
@@ -156,6 +163,8 @@ export default function ChatroomPage() {
               isOwn
             };
             
+            console.log('Adding new message to state:', formattedMsg);
+            
             // Mark as read if it's from the other user
             if (!isOwn) {
               supabase
@@ -169,9 +178,12 @@ export default function ChatroomPage() {
           });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   }, [user?.id, userId, otherUser, profile]);
