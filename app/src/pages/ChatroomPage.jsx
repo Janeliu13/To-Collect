@@ -126,30 +126,47 @@ export default function ChatroomPage() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `sender_id=eq.${userId},receiver_id=eq.${user.id}`
+          table: 'messages'
         },
         (payload) => {
-          // When other user sends a message, add it to the list
           const newMsg = payload.new;
-          const formattedMsg = {
-            id: newMsg.id,
-            type: newMsg.message_type,
-            text: newMsg.message_text,
-            imageUrl: newMsg.image_url,
-            username: otherUser?.username,
-            avatarUrl: otherUser?.avatar_url,
-            timestamp: new Date(newMsg.created_at),
-            isOwn: false
-          };
-          setMessages((prev) => [...prev, formattedMsg]);
           
-          // Mark as read immediately
-          supabase
-            .from('messages')
-            .update({ read: true })
-            .eq('id', newMsg.id)
-            .then();
+          // Only process messages relevant to this conversation
+          const isRelevant = 
+            (newMsg.sender_id === user.id && newMsg.receiver_id === userId) ||
+            (newMsg.sender_id === userId && newMsg.receiver_id === user.id);
+          
+          if (!isRelevant) return;
+          
+          // Check if message already exists in state (to avoid duplicates)
+          setMessages((prev) => {
+            if (prev.some(m => m.id === newMsg.id)) {
+              return prev;
+            }
+            
+            const isOwn = newMsg.sender_id === user.id;
+            const formattedMsg = {
+              id: newMsg.id,
+              type: newMsg.message_type,
+              text: newMsg.message_text,
+              imageUrl: newMsg.image_url,
+              username: isOwn ? profile?.username : otherUser?.username,
+              avatarUrl: isOwn ? profile?.avatar_url : otherUser?.avatar_url,
+              timestamp: new Date(newMsg.created_at),
+              isOwn
+            };
+            
+            // Mark as read if it's from the other user
+            if (!isOwn) {
+              supabase
+                .from('messages')
+                .update({ read: true })
+                .eq('id', newMsg.id)
+                .then();
+            }
+            
+            return [...prev, formattedMsg];
+          });
         }
       )
       .subscribe();
@@ -157,7 +174,7 @@ export default function ChatroomPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id, userId, otherUser]);
+  }, [user?.id, userId, otherUser, profile]);
 
   // Mark messages as read when viewing this chat
   useEffect(() => {
@@ -241,34 +258,21 @@ export default function ChatroomPage() {
     const text = message.trim();
     if (!text || !user?.id || !userId) return;
     
-    // Save message to database
-    const { data, error } = await supabase
+    // Save message to database - real-time subscription will handle adding it to state
+    const { error } = await supabase
       .from('messages')
       .insert({
         sender_id: user.id,
         receiver_id: userId,
         message_text: text,
         message_type: 'text'
-      })
-      .select()
-      .single();
+      });
     
     if (error) {
       console.error('Error sending message:', error);
       return;
     }
     
-    // Add message to local state
-    const newMessage = {
-      id: data.id,
-      type: 'text',
-      text,
-      username: profile?.username || 'You',
-      avatarUrl: profile?.avatar_url,
-      timestamp: new Date(data.created_at),
-      isOwn: true
-    };
-    setMessages((prev) => [...prev, newMessage]);
     setMessage('');
   };
 
