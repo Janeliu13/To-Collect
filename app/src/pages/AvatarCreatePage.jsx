@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 /**
@@ -173,17 +173,22 @@ export default function AvatarCreatePage({ isEditMode = false }) {
           />
         </button>
       ) : (
-        <Link 
-          to={isEditMode ? '/main/profile' : '/'} 
-          className="object-upload-back-btn" 
+        <button
+          type="button"
+          className="object-upload-back-btn"
           aria-label="Back"
+          onClick={() =>
+            navigate(isEditMode ? '/main/profile' : '/', {
+              replace: true,
+            })
+          }
         >
           <img
             src="/assets/back-button-shape.png?v=3"
             alt=""
             className="object-upload-back-btn-shape"
           />
-        </Link>
+        </button>
       )}
       {error && <p className="object-upload-error">{error}</p>}
 

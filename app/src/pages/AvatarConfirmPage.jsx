@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -304,18 +304,23 @@ export default function AvatarConfirmPage() {
 
   return (
     <div className="page object-upload-page avatar-confirm-page">
-      <Link
-        to={isEditMode ? '/avatar-edit' : '/avatar/create'}
-        state={{ imageBlob }}
+      <button
+        type="button"
         className="object-upload-back-btn"
         aria-label="Back to camera"
+        onClick={() =>
+          navigate(isEditMode ? '/avatar-edit' : '/avatar/create', {
+            state: { imageBlob },
+            replace: true,
+          })
+        }
       >
         <img
           src="/assets/back-button-shape.png?v=3"
           alt=""
           className="object-upload-back-btn-shape"
         />
-      </Link>
+      </button>
 
       {error && <p className="object-upload-error">{error}</p>}
 
