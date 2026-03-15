@@ -10,6 +10,7 @@ export default function MainPage() {
   const [searchParams] = useSearchParams();
   const isProfilePage = location.pathname === '/main/profile';
   const isUserGallery = location.pathname === '/main/users';
+  const isAboutPage = location.pathname === '/main/about';
   const [categories, setCategories] = useState([]);
   const [galleryObjects, setGalleryObjects] = useState([]);
   const [users, setUsers] = useState([]);
@@ -169,17 +170,33 @@ export default function MainPage() {
 
   return (
     <div className="main-page-figma">
-      <button
-        type="button"
-        className="main-page-logout-btn"
-        onClick={() => {
-          signOut();
-          navigate('/', { replace: true });
-        }}
-        aria-label="Log out"
-      >
-        Log out
-      </button>
+      <div className="main-page-corner-btns">
+        <button
+          type="button"
+          className={'main-page-corner-btn' + (isAboutPage ? ' main-page-corner-btn-active' : '')}
+          onClick={() => !isAboutPage && navigate('/main/about')}
+          aria-label="About"
+          disabled={isAboutPage}
+        >
+          About
+        </button>
+        <button
+          type="button"
+          className="main-page-corner-btn"
+          onClick={() => {
+            signOut();
+            navigate('/', { replace: true });
+          }}
+          aria-label="Log out"
+        >
+          Log out
+        </button>
+      </div>
+      {isAboutPage ? (
+        <div className="main-page-about-outlet">
+          <Outlet />
+        </div>
+      ) : (
       <div className="main-page-body">
         <div className="main-page-rect-top" aria-label="Objects A–Z">
           <span className="main-page-rect-top-text">objects A - Z</span>
@@ -337,6 +354,7 @@ export default function MainPage() {
           chatroom
         </Link>
       </div>
+      )}
     </div>
   );
 }

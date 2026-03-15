@@ -137,7 +137,7 @@ export default function AvatarConfirmPage() {
       const resizedBlob = await resizeImageBlob(imageBlob);
       const imageBase64 = await blobToBase64(resizedBlob);
       if (!imageBase64) {
-        setError('生成头像失败: 无法读取图片');
+        setError('Failed to generate avatar: could not read image');
         setGenerating(false);
         return;
       }
@@ -149,13 +149,13 @@ export default function AvatarConfirmPage() {
           : undefined,
       });
       if (fnErr) {
-        const detail = data?.error || fnErr.message || '请稍后重试';
-        setError('生成头像失败: ' + detail);
+        const detail = data?.error || fnErr.message || 'Please try again later';
+        setError('Failed to generate avatar: ' + detail);
         setGenerating(false);
         return;
       }
       if (data?.error) {
-        setError('生成头像失败: ' + (data.error || '请稍后重试'));
+        setError('Failed to generate avatar: ' + (data.error || 'Please try again later'));
         setGenerating(false);
         return;
       }
@@ -164,7 +164,7 @@ export default function AvatarConfirmPage() {
         setGeneratedB64(data.b64_json);
       }
     } catch (e) {
-      setError('生成头像失败: ' + (e?.message || '请稍后重试'));
+      setError('Failed to generate avatar: ' + (e?.message || 'Please try again later'));
     }
     setGenerating(false);
   }, [imageBlob]);
@@ -242,8 +242,8 @@ export default function AvatarConfirmPage() {
     if (uploadErr) {
       setError(
         is429(uploadErr)
-          ? '请求过于频繁(429)，请稍等 30 秒～1 分钟再试。'
-          : '上传失败: ' + (uploadErr.message || 'unknown')
+          ? 'Too many requests (429). Please wait 30 seconds to 1 minute and try again.'
+          : 'Upload failed: ' + (uploadErr.message || 'unknown')
       );
       setSaving(false);
       return;
@@ -270,19 +270,19 @@ export default function AvatarConfirmPage() {
     if (insertErr) {
       const msg = insertErr.message || '';
       if (is429(insertErr)) {
-        setError('请求过于频繁(429)，请稍等 30 秒～1 分钟再试。');
+        setError('Too many requests (429). Please wait 30 seconds to 1 minute and try again.');
       } else if (/duplicate key|unique.*username|username.*unique/i.test(msg)) {
-        setError('该用户名已被使用，请换一个。');
+        setError('This username is already taken. Please choose another.');
       } else if (/row-level security|RLS|policy/i.test(msg)) {
-        setError('无写入权限，请确认已登录且 RLS 策略允许写入。');
+        setError('No write permission. Please make sure you are logged in and RLS allows writes.');
       } else {
-        setError('保存失败: ' + (msg || insertErr.code || 'unknown'));
+        setError('Save failed: ' + (msg || insertErr.code || 'unknown'));
       }
       setSaving(false);
       return;
     }
     if (!insertedRow || insertedRow.length === 0) {
-      setError('保存失败: 未返回写入结果');
+      setError('Save failed: no result returned');
       setSaving(false);
       return;
     }

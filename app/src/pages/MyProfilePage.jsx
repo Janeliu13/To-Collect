@@ -215,7 +215,7 @@ export default function MyProfilePage() {
           {profile?.avatar_url ? (
             <img src={profile.avatar_url} alt="" className="my-profile-avatar-img" />
           ) : (
-            <span className="my-profile-avatar-placeholder">头像</span>
+            <span className="my-profile-avatar-placeholder">Avatar</span>
           )}
         </div>
         <button

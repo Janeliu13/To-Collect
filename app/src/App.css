@@ -178,6 +178,25 @@
   color: #c00;
   font-size: 0.9rem;
   margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.form-forgot-password-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: #0066cc;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 0.25rem;
+}
+
+.form-forgot-password-link:hover {
+  color: #004499;
 }
 
 /* Email confirmation popup */

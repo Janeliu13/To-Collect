@@ -12,6 +12,7 @@ import ChatroomPage from './pages/ChatroomPage';
 import ObjectDetailPage from './pages/ObjectDetailPage';
 import ObjectUploadPage from './pages/ObjectUploadPage';
 import UserProfilePage from './pages/UserProfilePage';
+import AboutPage from './pages/AboutPage';
 import './App.css';
 import './MainPageFigma.css';
 
@@ -98,6 +99,7 @@ function App() {
         }
       >
         <Route index element={<Navigate to="/main/gallery" replace />} />
+        <Route path="about" element={<AboutPage />} />
         <Route path="gallery" element={<ObjectGalleryPage />} />
         <Route path="users" element={<UserGalleryPage />} />
         <Route path="messages" element={<MessagesPage />} />

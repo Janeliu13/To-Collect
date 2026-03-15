@@ -390,12 +390,18 @@ a.main-page-object-label-link.active,
   border-radius: 2px;
 }
 
-/* Log out button: just above neon green line in background, #F5A4C6 */
-.main-page-logout-btn {
+/* Corner buttons: About (left) + Log out (right), same style */
+.main-page-corner-btns {
   position: fixed;
   top: 5.5rem;
   right: 1rem;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.main-page-corner-btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -405,10 +411,60 @@ a.main-page-object-label-link.active,
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
 }
 
-.main-page-logout-btn:hover {
+.main-page-corner-btn:hover {
   filter: brightness(0.96);
+}
+
+.main-page-corner-btn-active {
+  cursor: default;
+  opacity: 0.9;
+}
+
+.main-page-corner-btn-active:hover {
+  filter: none;
+}
+
+/* When route is /main/about: full-width area (background from .main-page-figma) */
+.main-page-about-outlet {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* About page: two rectangles + back button (Figma frame 7866×5263) */
+.about-page {
+  flex: 1;
+  position: relative;
+  min-height: 100%;
+}
+
+/* Purple rect: border around blue — taller (X 737, Y 1421, W 6495, H 3579) */
+.about-page-rect-purple {
+  position: absolute;
+  left: calc(100vw * 737 / 7866);
+  top: calc(100vh * 1421 / 5263);
+  width: calc(100vw * 6495 / 7866);
+  height: calc(100vh * 3579 / 5263);
+  border-radius: 2px;
+  pointer-events: none;
+  background: rgba(225, 173, 240, 0.5);
+}
+
+/* Blue rect: inner area, centered in purple (W 5385 H 2981, X 1292 Y 1720) */
+.about-page-rect-blue {
+  position: absolute;
+  left: calc(100vw * 1292 / 7866);
+  top: calc(100vh * 1720 / 5263);
+  width: calc(100vw * 5385 / 7866);
+  height: calc(100vh * 2981 / 5263);
+  border-radius: 2px;
+  pointer-events: none;
+  background: rgba(212, 237, 244, 0.8);
 }
 
 /* Two right side panels only: equal height (1760), 80px gap, bottom ends at 5134 */
