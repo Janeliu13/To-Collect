@@ -221,11 +221,12 @@ export default function AvatarConfirmPage() {
 
     const avatarToUpload = generatedB64 ? b64ToBlob(generatedB64, 'image/png') : imageBlob;
     const ext = generatedB64 ? 'png' : (imageBlob.type === 'image/png' ? 'png' : 'jpg');
-    const path = `${user.id}/avatar.${ext}`;
+    const timestamp = Date.now();
+    const path = `${user.id}/avatar-${timestamp}.${ext}`;
 
     const { error: uploadErr } = await supabase.storage
       .from('avatars')
-      .upload(path, avatarToUpload, { upsert: true });
+      .upload(path, avatarToUpload, { upsert: false });
 
     if (uploadErr) {
       setError(
