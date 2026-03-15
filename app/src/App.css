@@ -904,14 +904,14 @@
   color: #FFF9C4;
 }
 
-/* Avatar centered in the purple box: smaller 2:3 portrait, full-body head-to-toe, no crop */
+/* Avatar in purple box: largest 2:3 size that fits, full-body head-to-toe, no crop (object-fit: contain) */
 .my-profile-left-box-content .my-profile-avatar {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: min(96px, 13vw);
-  height: min(144px, 19.5vw);
+  width: min(128px, 17vw);
+  height: min(192px, 25.5vw);
   max-width: calc(100% - 2rem);
   max-height: calc(100% - 2rem);
 }
@@ -921,7 +921,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: calc(50% - min(100px, 14vw));
+  top: calc(50% - min(120px, 16vw));
   width: calc(100vw * 750 / 7866);
   height: calc(100vh * 180 / 5263);
   background: #f5a4c6;
