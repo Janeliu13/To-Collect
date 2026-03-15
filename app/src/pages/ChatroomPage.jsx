@@ -18,6 +18,7 @@ export default function ChatroomPage() {
   const [recentChats, setRecentChats] = useState([]);
   const messagesEndRef = useRef(null);
   const hasInsertedInitialImage = useRef(false);
+  const insertedObjectIdRef = useRef(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -162,6 +163,16 @@ export default function ChatroomPage() {
             return;
           }
           
+          // Skip adding when this is the object image we just inserted from object view (loadMessages will show it; avoid duplicate display)
+          if (
+            newMsg.sender_id === user.id &&
+            newMsg.message_type === 'image' &&
+            newMsg.object_id &&
+            insertedObjectIdRef.current === newMsg.object_id
+          ) {
+            return;
+          }
+          
           // Check if message already exists in state (to avoid duplicates)
           const messageExists = await new Promise((resolve) => {
             setMessages((prev) => {
@@ -245,6 +256,7 @@ export default function ChatroomPage() {
   useEffect(() => {
     if (location.state?.objectImage && location.state?.objectId && user?.id && userId && !hasInsertedInitialImage.current) {
       hasInsertedInitialImage.current = true;
+      insertedObjectIdRef.current = location.state.objectId;
       
       // Check if ANY message with this object_id already exists (from any user)
       supabase
@@ -266,9 +278,11 @@ export default function ChatroomPage() {
                 object_id: location.state.objectId
               })
               .then(() => {
-                // Reload all messages to include the new one
+                // Reload all messages to include the new one (realtime will also fire; we skip adding that in handler to avoid duplicate)
                 loadMessages();
               });
+          } else {
+            insertedObjectIdRef.current = null;
           }
         });
     }
