@@ -17,8 +17,8 @@ export default function ChatroomPage() {
   const [otherUser, setOtherUser] = useState(null);
   const [recentChats, setRecentChats] = useState([]);
   const messagesEndRef = useRef(null);
-  const hasInsertedInitialImage = useRef(false);
   const insertedObjectIdRef = useRef(null);
+  const insertInProgressRef = useRef(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -252,41 +252,35 @@ export default function ChatroomPage() {
     scrollToBottom();
   }, [messages]);
 
-  // Add initial object image message if passed from ObjectDetailPage
+  // Send object image when opened from ObjectDetailPage "chat" — once per click, every time
   useEffect(() => {
-    if (location.state?.objectImage && location.state?.objectId && user?.id && userId && !hasInsertedInitialImage.current) {
-      hasInsertedInitialImage.current = true;
-      insertedObjectIdRef.current = location.state.objectId;
-      
-      // Check if ANY message with this object_id already exists (from any user)
-      supabase
-        .from('messages')
-        .select('id')
-        .eq('object_id', location.state.objectId)
-        .or(`and(sender_id.eq.${user.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.id})`)
-        .maybeSingle()
-        .then(({ data: existingMsg }) => {
-          if (!existingMsg) {
-            // Only insert if this object hasn't been shared in this conversation before
-            supabase
-              .from('messages')
-              .insert({
-                sender_id: user.id,
-                receiver_id: userId,
-                message_type: 'image',
-                image_url: location.state.objectImage,
-                object_id: location.state.objectId
-              })
-              .then(() => {
-                // Reload all messages to include the new one (realtime will also fire; we skip adding that in handler to avoid duplicate)
-                loadMessages();
-              });
-          } else {
-            insertedObjectIdRef.current = null;
-          }
-        });
-    }
-  }, [location.state, user, userId, loadMessages]);
+    const objectImage = location.state?.objectImage;
+    const objectId = location.state?.objectId;
+    if (!objectImage || !objectId || !user?.id || !userId || insertInProgressRef.current) return;
+
+    insertInProgressRef.current = true;
+    insertedObjectIdRef.current = objectId;
+
+    supabase
+      .from('messages')
+      .insert({
+        sender_id: user.id,
+        receiver_id: userId,
+        message_type: 'image',
+        image_url: objectImage,
+        object_id: objectId
+      })
+      .then(() => {
+        loadMessages();
+      })
+      .finally(() => {
+        insertInProgressRef.current = false;
+        // Clear after delay so realtime handler can skip duplicate; then next "chat" click can send again
+        setTimeout(() => {
+          insertedObjectIdRef.current = null;
+        }, 2000);
+      });
+  }, [location.state?.objectImage, location.state?.objectId, user?.id, userId, loadMessages]);
 
   // Helper function to check if we should show timestamp (more than 2 minutes since last message)
   const shouldShowTimestamp = (currentIndex) => {
