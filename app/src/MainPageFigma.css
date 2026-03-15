@@ -443,11 +443,11 @@ a.main-page-object-label-link.active,
   min-height: 100%;
 }
 
-/* Purple rect: border around blue — taller (X 737, Y 1421, W 6495, H 3579) */
+/* Purple rect: border around blue (X 737, Y 1421, W 6495, H 3579) */
 .about-page-rect-purple {
   position: absolute;
   left: calc(100vw * 737 / 7866);
-  top: calc(100vh * 1421 / 5263);
+  top: calc(100vh * 1521 / 5263);
   width: calc(100vw * 6495 / 7866);
   height: calc(100vh * 3579 / 5263);
   border-radius: 2px;
@@ -455,16 +455,75 @@ a.main-page-object-label-link.active,
   background: rgba(225, 173, 240, 0.5);
 }
 
-/* Blue rect: inner area, centered in purple (W 5385 H 2981, X 1292 Y 1720) */
+/* Blue rect: inner content area, scrollable (W 5385 H 2981, X 1292 Y 1820) */
 .about-page-rect-blue {
   position: absolute;
   left: calc(100vw * 1292 / 7866);
-  top: calc(100vh * 1720 / 5263);
+  top: calc(100vh * 1820 / 5263);
   width: calc(100vw * 5385 / 7866);
   height: calc(100vh * 2981 / 5263);
   border-radius: 2px;
-  pointer-events: none;
-  background: rgba(212, 237, 244, 0.8);
+  background: rgba(212, 237, 244, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2.5rem 3rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.about-page-content-text {
+  font-family: Arial, sans-serif;
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  line-height: 1.65;
+  text-align: center;
+  max-width: 42em;
+  margin: 0;
+  color: #00C1FF;
+}
+
+.about-page-content-text p { margin: 0 0 1rem; }
+.about-page-content-text p:last-child { margin-bottom: 0; }
+.about-page-content-text .about-pink { color: #F5A4C6; }
+.about-page-content-text .about-nowrap { white-space: nowrap; }
+.about-page-content-text .about-deco-line {
+  margin: 1.25rem 0;
+  font-size: 0.85em;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.about-page-content-text .about-section-num {
+  margin-right: 0.35rem;
+}
+.about-page-content-text .about-inline-img-wrap {
+  text-align: center;
+  margin: 0.75rem 0;
+}
+.about-page-content-text .about-inline-img {
+  max-width: 280px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+.about-page-content-text .about-inline-img-lg {
+  max-width: 560px;
+}
+.about-page-content-text .about-inline-img-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+.about-page-content-text .about-inline-img-row .about-inline-img-wrap {
+  flex: 1 1 200px;
+  max-width: 280px;
+  margin: 0;
 }
 
 /* Two right side panels only: equal height (1760), 80px gap, bottom ends at 5134 */
@@ -480,7 +539,7 @@ a.main-page-object-label-link.active,
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
   z-index: 2;
 }
 
@@ -488,9 +547,10 @@ a.main-page-object-label-link.active,
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.1rem;
   width: 100%;
-  padding-top: 0.25rem;
+  padding-top: 0.15rem;
+  padding-bottom: 0.75rem;
 }
 
 /* Rectangle in top right panel: shows logged-in user’s username, color #F5A4C6 */
@@ -509,8 +569,9 @@ a.main-page-object-label-link.active,
 
 /* Logged-in user’s avatar under username in top right panel */
 .main-page-rect-panel-top-avatar {
-  width: 150px;
-  height: 150px;
+  width: 132px;
+  height: 198px;
+  margin-top: -1.1rem;
   border-radius: 2px;
   background: transparent;
   overflow: hidden;
@@ -523,7 +584,8 @@ a.main-page-object-label-link.active,
 .main-page-rect-panel-top-avatar-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .main-page-rect-panel-top-avatar-placeholder {
@@ -538,6 +600,7 @@ a.main-page-object-label-link.active,
 .main-page-rect-panel-top-profile-btn {
   min-width: 150px;
   height: 34px;
+  margin-top: -0.4rem;
   padding: 0 1.1rem;
   background: #f5a4c6;
   border-radius: 2px;

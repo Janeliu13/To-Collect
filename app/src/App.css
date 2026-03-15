@@ -910,8 +910,8 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: min(128px, 17vw);
-  height: min(192px, 25.5vw);
+  width: min(140px, 18.5vw);
+  height: min(210px, 28vw);
   max-width: calc(100% - 2rem);
   max-height: calc(100% - 2rem);
 }
