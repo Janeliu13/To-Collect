@@ -7,8 +7,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const DEFAULT_PROMPT = `Create a full-body pixel art character in an early-2000s internet doll / avatar style.
-The character should be centered, standing upright, facing forward, with a neutral pose.
+const DEFAULT_PROMPT = `IMPORTANT: The output MUST be a full-body image. Show the entire figure from head to feet. Do not crop to bust, portrait, or half-body.
+
+Create a full-body pixel art character in an early-2000s internet doll / avatar style.
+The character must be full body: centered, standing upright, facing forward, from head to toes, with a neutral pose. Include legs and feet clearly visible.
 
 Visual style:
 - Low-resolution pixel art (sprite-like), clearly visible pixels
@@ -18,6 +20,7 @@ Visual style:
 - Clean pixel outlines
 
 Character details:
+- Full-body figure only: head, torso, arms, legs, and feet all visible in frame
 - Cute with same facial expression as reference
 - Simplified facial features (minimal nose detail, large eyes)
 - replicate any visible accessories
@@ -34,6 +37,7 @@ Mood:
 - Feels like a collectible digital character from an old social media game or avatar website
 
 Avoid:
+- Cropping to bust, portrait, half-body, or head-and-shoulders only
 - Photorealism
 - Smooth gradients
 - 3D rendering
