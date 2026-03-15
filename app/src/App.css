@@ -869,7 +869,7 @@
   position: absolute;
   right: 1rem;
   bottom: 0.35rem;
-  color: #F5A4C6;
+  color: #FFFFDC;
   text-decoration: underline;
   font-size: clamp(0.75rem, 1.2vw, 0.9rem);
   font-family: Arial, sans-serif;
@@ -882,7 +882,7 @@
 }
 
 .my-profile-edit-link:hover {
-  color: #FF8AB8;
+  color: #FFF9C4;
 }
 
 /* Avatar centered in the purple box (absolute center) */
