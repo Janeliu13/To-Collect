@@ -292,7 +292,7 @@ export default function AvatarConfirmPage() {
     
     // Navigate based on mode
     if (isEditMode) {
-      navigate('/main/profile', { replace: true });
+      navigate('/main/profile', { state: { fromAvatarEdit: true }, replace: true });
     } else {
       navigate('/main', { replace: true });
     }

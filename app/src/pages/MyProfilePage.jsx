@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -13,6 +13,7 @@ const EMPTY_FEELING_SLOT = '00000000-0000-0000-0000-000000000000';
  */
 export default function MyProfilePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, profile } = useAuth();
   const [profileObjects, setProfileObjects] = useState([]);
   const [reposts, setReposts] = useState([]);
@@ -189,7 +190,13 @@ export default function MyProfilePage() {
   return (
     <div className="my-profile-page-full">
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => {
+          if (location.state?.fromAvatarEdit) {
+            navigate('/main', { replace: true });
+          } else {
+            navigate(-1);
+          }
+        }}
         className="my-profile-back-btn"
         aria-label="Back to previous page"
       >
