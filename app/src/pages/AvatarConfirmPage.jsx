@@ -127,6 +127,8 @@ export default function AvatarConfirmPage() {
   const previewUrl = generatedB64 ? `data:image/png;base64,${generatedB64}` : null;
   const frameStars = useFrameStars();
 
+  const generatedOnceRef = useRef(false);
+
   const generateAvatar = useCallback(async () => {
     if (!imageBlob) return;
     setError('');
@@ -157,7 +159,8 @@ export default function AvatarConfirmPage() {
         setGenerating(false);
         return;
       }
-      if (data?.b64_json) {
+      if (data?.b64_json && !generatedOnceRef.current) {
+        generatedOnceRef.current = true;
         setGeneratedB64(data.b64_json);
       }
     } catch (e) {
@@ -168,7 +171,10 @@ export default function AvatarConfirmPage() {
 
   const didRequestGenerateRef = useRef(false);
   useEffect(() => {
-    if (imageBlob) didRequestGenerateRef.current = false;
+    if (imageBlob) {
+      didRequestGenerateRef.current = false;
+      generatedOnceRef.current = false;
+    }
   }, [imageBlob]);
   useEffect(() => {
     if (!imageBlob || didRequestGenerateRef.current) return;
@@ -197,6 +203,12 @@ export default function AvatarConfirmPage() {
   const handleBack = () => {
     const path = isEditMode ? '/avatar-edit' : '/avatar/create';
     navigate(path, { state: { imageBlob } });
+  };
+
+  const handleRegenerate = () => {
+    generatedOnceRef.current = false;
+    setGeneratedB64(null);
+    generateAvatar();
   };
 
   const is429 = (err) => {
@@ -362,7 +374,7 @@ export default function AvatarConfirmPage() {
           <button
             type="button"
             className="object-upload-capture-btn"
-            onClick={generateAvatar}
+            onClick={handleRegenerate}
             disabled={generating || saving}
           >
             {generating ? 'Generating…' : 'Regenerate'}
