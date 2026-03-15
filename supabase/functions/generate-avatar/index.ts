@@ -116,7 +116,7 @@ Deno.serve(async (req) => {
         quality: 'high',
         output_format: 'png',
         background: 'transparent',
-        size: '1024x1536',
+        size: '1024x1536', // API only allows 1024x1024, 1024x1536, 1536x1024, auto — use portrait 2:3
         n: 1,
       }),
     })
