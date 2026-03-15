@@ -7,42 +7,44 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const DEFAULT_PROMPT = `IMPORTANT: The output MUST be a full-body image. Show the entire figure from head to feet. Do not crop to bust, portrait, or half-body.
+const DEFAULT_PROMPT = `CRITICAL — FRAMING: The image MUST show the COMPLETE figure from the TOP OF THE HEAD to the BOTTOM OF THE FEET. Never cut off at the knees, waist, chest, or ankles. Feet must be fully visible. The entire body must fit in the vertical frame with a small margin; never crop the figure. If you show only part of the body (e.g. bust or half-body), the image is wrong.
+
+IMPORTANT: (1) VERTICAL portrait, (2) FULL BODY head-to-toe only, (3) SOLID flat colors, (4) TRANSPARENT background.
 
 Create a full-body pixel art character in an early-2000s internet doll / avatar style.
-The character must be full body: centered, standing upright, facing forward, from head to toes, with a neutral pose. Include legs and feet clearly visible.
+The character MUST be full body: centered, standing upright, facing forward, from the top of the head to the soles of the feet. Legs and feet must be fully visible and inside the frame. Use the full vertical canvas so the whole figure fits—head at top, feet at bottom, nothing cut off.
 
 Visual style:
 - Low-resolution pixel art (sprite-like), clearly visible pixels
+- SOLID, flat colors only—no gradients, no soft shading, no realism
 - Simplified anatomy with slightly over-sized head and relatively slender body (following the reference image body shape)
-- Flat lighting, no realism, no depth shading
-- extract main color palette from the reference image
+- Flat lighting, no depth shading
+- Extract main color palette from the reference image (use as solid fills)
 - Clean pixel outlines
 
 Character details:
-- Full-body figure only: head, torso, arms, legs, and feet all visible in frame
+- FULL BODY ONLY: head, neck, torso, arms, legs, and feet ALL visible in frame from top to bottom. No cropping.
+- Scale the figure so the complete body fits in the image (smaller figure is fine; cut-off figure is wrong).
 - Cute with same facial expression as reference
-- Simplified facial features (minimal nose detail, large eyes)
-- replicate any visible accessories
+- Simplified facial features
+- Replicate any visible accessories
 - Stylized hair with visible pixel strands
-- copy the outfit of the original image
+- Copy the outfit of the original image
 - Fashion-forward, early-2000s "internet doll" aesthetic
 
 Background:
-- transparent background
+- Transparent background only—no solid color or scene behind the character.
 
 Mood:
 - Cute, playful
 - Nostalgic and decorative
 - Feels like a collectible digital character from an old social media game or avatar website
 
-Avoid:
-- Cropping to bust, portrait, half-body, or head-and-shoulders only
-- Photorealism
-- Smooth gradients
-- 3D rendering
-- Modern UI aesthetics
-- Detailed facial realism`
+NEVER DO (image is invalid if you do):
+- Do NOT crop to bust, portrait, half-body, head-and-shoulders, or three-quarter view. FULL BODY only.
+- Do NOT cut off at knees, thighs, waist, chest, or ankles. Top of head to bottom of feet must be visible.
+- Do NOT use horizontal or square framing—vertical only.
+- No photorealism, smooth gradients, 3D rendering, or opaque background.`
 
 interface ReqBody {
   imageBase64?: string
