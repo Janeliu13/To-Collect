@@ -5,8 +5,9 @@ import { useAuth } from '../contexts/AuthContext';
 /**
  * Profile Avatar Creation: same look as object upload page — webcam with frame/stars,
  * same Capture and Upload pink buttons. After capture/upload, Back (retake) and Next.
+ * Can also be used in edit mode to update existing avatar/username.
  */
-export default function AvatarCreatePage() {
+export default function AvatarCreatePage({ isEditMode = false }) {
   const navigate = useNavigate();
   const { user, loading, profile } = useAuth();
   const [imageBlob, setImageBlob] = useState(null);
@@ -67,11 +68,12 @@ export default function AvatarCreatePage() {
       navigate('/', { replace: true });
       return;
     }
-    if (!loading && user && profile) {
+    // In edit mode, allow access even if profile exists
+    if (!loading && user && profile && !isEditMode) {
       navigate('/main', { replace: true });
       return;
     }
-  }, [user, loading, profile, navigate]);
+  }, [user, loading, profile, navigate, isEditMode]);
 
   /* Auto-start webcam when no image (same as object upload page) */
   useEffect(() => {
@@ -149,7 +151,7 @@ export default function AvatarCreatePage() {
       setError('Please capture or upload a photo first');
       return;
     }
-    navigate('/avatar/confirm', { state: { imageBlob } });
+    navigate('/avatar/confirm', { state: { imageBlob, isEditMode } });
   };
 
   if (loading) return <div className="app-loading">Loading...</div>;
@@ -171,7 +173,11 @@ export default function AvatarCreatePage() {
           />
         </button>
       ) : (
-        <Link to="/" className="object-upload-back-btn" aria-label="Back">
+        <Link 
+          to={isEditMode ? '/main/profile' : '/'} 
+          className="object-upload-back-btn" 
+          aria-label="Back"
+        >
           <img
             src="/assets/back-button-shape.png?v=3"
             alt=""

@@ -107,6 +107,7 @@ export default function AvatarConfirmPage() {
   const location = useLocation();
   const { user, loading, profile, refreshProfile } = useAuth();
   const imageBlob = location.state?.imageBlob;
+  const isEditMode = location.state?.isEditMode || false;
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -120,6 +121,13 @@ export default function AvatarConfirmPage() {
     setOriginalPreviewUrl(url);
     return () => URL.revokeObjectURL(url);
   }, [imageBlob]);
+
+  // Pre-fill username in edit mode
+  useEffect(() => {
+    if (isEditMode && profile?.username) {
+      setUsername(profile.username);
+    }
+  }, [isEditMode, profile]);
 
   const previewUrl = generatedB64 ? `data:image/png;base64,${generatedB64}` : originalPreviewUrl;
   const frameStars = useFrameStars();
@@ -178,11 +186,12 @@ export default function AvatarConfirmPage() {
       navigate('/', { replace: true });
       return;
     }
-    if (!loading && user && profile) {
+    // In edit mode, allow access even if profile exists
+    if (!loading && user && profile && !isEditMode) {
       navigate('/main', { replace: true });
       return;
     }
-  }, [user, loading, profile, navigate]);
+  }, [user, loading, profile, navigate, isEditMode]);
 
   useEffect(() => {
     if (!imageBlob && !loading && user) {
@@ -191,7 +200,8 @@ export default function AvatarConfirmPage() {
   }, [imageBlob, loading, user, navigate]);
 
   const handleBack = () => {
-    navigate('/avatar/create', { state: { imageBlob } });
+    const path = isEditMode ? '/avatar-edit' : '/avatar/create';
+    navigate(path, { state: { imageBlob } });
   };
 
   const is429 = (err) => {
@@ -267,7 +277,13 @@ export default function AvatarConfirmPage() {
 
     await refreshProfile();
     setSaving(false);
-    navigate('/main', { replace: true });
+    
+    // Navigate based on mode
+    if (isEditMode) {
+      navigate('/main/profile', { replace: true });
+    } else {
+      navigate('/main', { replace: true });
+    }
   };
 
   if (loading) return <div className="app-loading">Loading...</div>;
@@ -277,7 +293,7 @@ export default function AvatarConfirmPage() {
   return (
     <div className="page object-upload-page avatar-confirm-page">
       <Link
-        to="/avatar/create"
+        to={isEditMode ? '/avatar-edit' : '/avatar/create'}
         state={{ imageBlob }}
         className="object-upload-back-btn"
         aria-label="Back to camera"

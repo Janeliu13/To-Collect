@@ -211,6 +211,9 @@ export default function MyProfilePage() {
             <span className="my-profile-avatar-placeholder">头像</span>
           )}
         </div>
+        <Link to="/avatar-edit" className="my-profile-edit-link">
+          edit
+        </Link>
       </div>
       <aside className="my-profile-rect-float-2" aria-hidden />
       {/* Blog label box: protrudes from left of yellow frame; W 1246, H 229, X 1981, Y 1651 */}

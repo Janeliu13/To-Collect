@@ -861,6 +861,23 @@
   pointer-events: none;
 }
 
+.my-profile-edit-link {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  color: #F5A4C6;
+  text-decoration: underline;
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: color 0.2s;
+  pointer-events: auto;
+}
+
+.my-profile-edit-link:hover {
+  color: #FF8AB8;
+}
+
 /* Avatar centered in the purple box (absolute center) */
 .my-profile-left-box-content .my-profile-avatar {
   position: absolute;

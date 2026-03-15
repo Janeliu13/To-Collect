@@ -29,6 +29,14 @@ function App() {
       <Route path="/" element={<EntryPage />} />
       <Route path="/avatar/create" element={<AvatarCreatePage />} />
       <Route path="/avatar/confirm" element={<AvatarConfirmPage />} />
+      <Route 
+        path="/avatar-edit" 
+        element={
+          <ProtectedMain>
+            <AvatarCreatePage isEditMode={true} />
+          </ProtectedMain>
+        } 
+      />
       {/* My Profile Page: standalone full page, reached only via the pink "my profile" button on the main page */}
       <Route
         path="/main/profile"
