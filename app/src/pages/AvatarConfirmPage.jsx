@@ -41,8 +41,8 @@ function useFrameStars() {
   }, []);
 }
 
-const MAX_SIZE = 1024;
-const JPEG_QUALITY = 0.85;
+const MAX_SIZE = 1536;
+const JPEG_QUALITY = 0.9;
 
 function resizeImageBlob(blob) {
   return new Promise((resolve, reject) => {

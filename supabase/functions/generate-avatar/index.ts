@@ -107,10 +107,10 @@ Deno.serve(async (req) => {
         images: [{ image_url: dataUrl }],
         prompt,
         input_fidelity: 'high',
-        quality: 'medium',
+        quality: 'high',
         output_format: 'png',
         background: 'transparent',
-        size: '1024x1024',
+        size: '1024x1536',
         n: 1,
       }),
     })
