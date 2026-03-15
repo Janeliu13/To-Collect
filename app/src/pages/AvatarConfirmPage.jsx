@@ -113,14 +113,8 @@ export default function AvatarConfirmPage() {
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [generatedB64, setGeneratedB64] = useState(null);
-  const [originalPreviewUrl, setOriginalPreviewUrl] = useState('');
 
-  useEffect(() => {
-    if (!imageBlob) return;
-    const url = URL.createObjectURL(imageBlob);
-    setOriginalPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [imageBlob]);
+  // Reference image (imageBlob) is only sent to API; we never show it, only the generated result
 
   // Pre-fill username in edit mode
   useEffect(() => {
@@ -129,7 +123,8 @@ export default function AvatarConfirmPage() {
     }
   }, [isEditMode, profile]);
 
-  const previewUrl = generatedB64 ? `data:image/png;base64,${generatedB64}` : originalPreviewUrl;
+  // Only show the single generated avatar (from reference image + prompt), never the raw photo
+  const previewUrl = generatedB64 ? `data:image/png;base64,${generatedB64}` : null;
   const frameStars = useFrameStars();
 
   const generateAvatar = useCallback(async () => {
@@ -216,11 +211,15 @@ export default function AvatarConfirmPage() {
       return;
     }
     if (!user || !imageBlob) return;
+    if (!generatedB64) {
+      setError('Please wait for avatar to generate');
+      return;
+    }
     setError('');
     setSaving(true);
 
-    const avatarToUpload = generatedB64 ? b64ToBlob(generatedB64, 'image/png') : imageBlob;
-    const ext = generatedB64 ? 'png' : (imageBlob.type === 'image/png' ? 'png' : 'jpg');
+    const avatarToUpload = b64ToBlob(generatedB64, 'image/png');
+    const ext = 'png';
     const timestamp = Date.now();
     const path = `${user.id}/avatar-${timestamp}.${ext}`;
 
@@ -333,7 +332,9 @@ export default function AvatarConfirmPage() {
             {previewUrl ? (
               <img src={previewUrl} alt="Avatar" className="object-upload-webcam-preview-img" />
             ) : (
-              <div className="avatar-placeholder">Loading...</div>
+              <div className="avatar-placeholder">
+                {generating ? 'Generating avatar…' : 'Loading…'}
+              </div>
             )}
             {generating && (
               <div className="object-upload-removing-bg">
@@ -370,7 +371,7 @@ export default function AvatarConfirmPage() {
             type="button"
             className="object-upload-upload-btn"
             onClick={handleNext}
-            disabled={!username.trim() || saving || generating}
+            disabled={!username.trim() || !generatedB64 || saving || generating}
           >
             {saving ? 'Saving…' : 'Next'}
           </button>
