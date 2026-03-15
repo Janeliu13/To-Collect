@@ -868,7 +868,7 @@
 .my-profile-edit-link {
   position: absolute;
   right: 1rem;
-  bottom: 1rem;
+  bottom: 0.35rem;
   color: #F5A4C6;
   text-decoration: underline;
   font-size: clamp(0.75rem, 1.2vw, 0.9rem);
