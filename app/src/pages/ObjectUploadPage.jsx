@@ -106,32 +106,16 @@ export default function ObjectUploadPage() {
   }, [stream]);
 
   useEffect(() => {
-    // Fetch all categories first
+    // Fetch all categories so user can pick one or create new (show all, not only those with objects)
     supabase
       .from('categories')
       .select('id, name, slug')
       .order('name')
-      .then(async ({ data: allCategories }) => {
+      .then(({ data: allCategories }) => {
         if (!allCategories?.length) return;
-        
-        // Get count of objects for each category
-        const categoriesWithObjects = [];
-        for (const cat of allCategories) {
-          const { count } = await supabase
-            .from('objects')
-            .select('*', { count: 'exact', head: true })
-            .eq('category_id', cat.id);
-          
-          if (count && count > 0) {
-            categoriesWithObjects.push(cat);
-          }
-        }
-        
-        if (categoriesWithObjects.length) {
-          setCategories(categoriesWithObjects);
-          const other = categoriesWithObjects.find((c) => c.slug === 'other');
-          setSelectedCategoryId((prev) => prev || (other ? other.id : categoriesWithObjects[0].id));
-        }
+        setCategories(allCategories);
+        const other = allCategories.find((c) => c.slug === 'other');
+        setSelectedCategoryId((prev) => prev || (other ? other.id : allCategories[0].id));
       });
   }, []);
 
@@ -361,7 +345,8 @@ export default function ObjectUploadPage() {
     setImageBlob(null);
     setDescription('');
     setNewCategoryName('');
-    setSelectedCategoryId(null);
+    const other = categories.find((c) => c.slug === 'other');
+    setSelectedCategoryId(other ? other.id : categories[0]?.id ?? null);
   };
 
   /**
@@ -414,6 +399,11 @@ export default function ObjectUploadPage() {
     // Resolve (or create) the category before uploading
     let categoryId = null;
     try {
+      if (selectedCategoryId === '__new__' && !newCategoryName.trim()) {
+        setError('Please enter a category name or pick an existing category.');
+        setSaving(false);
+        return;
+      }
       categoryId = await resolveCategory();
     } catch (e) {
       setError(e?.message || 'Failed to create category');
@@ -591,20 +581,16 @@ export default function ObjectUploadPage() {
           <canvas ref={canvasRef} style={{ display: 'none' }} />
           {imageBlob && !removingBg && (
             <div className="object-upload-description-wrap">
+              <span className="object-upload-category-label" aria-hidden>Category</span>
               {selectedCategoryId === '__new__' ? (
                 <div className="object-upload-category-new-row">
                   <input
                     ref={newCategoryInputRef}
                     className="object-upload-category-new-input"
                     type="text"
-                    placeholder="Category name…"
+                    placeholder="Type new category label…"
                     value={newCategoryName}
-                    onChange={(e) => {
-                      console.log('Category input onChange:', e.target.value);
-                      setNewCategoryName(e.target.value);
-                    }}
-                    onInput={(e) => console.log('Category input onInput:', e.target.value)}
-                    onKeyDown={(e) => console.log('Category input keyDown:', e.key)}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
                     maxLength={50}
                     aria-label="New category name"
                   />

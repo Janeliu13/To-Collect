@@ -550,6 +550,14 @@
   z-index: 10;
 }
 
+.object-upload-category-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
 .object-upload-category-select {
   width: 100%;
   max-width: 620px;
