@@ -929,7 +929,7 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  top: calc(50% - min(120px, 16vw));
+  top: calc(50% - min(120px, 16vw) - 0.85rem);
   width: calc(100vw * 750 / 7866);
   height: calc(100vh * 180 / 5263);
   background: #f5a4c6;

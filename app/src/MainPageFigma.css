@@ -537,25 +537,27 @@ a.main-page-object-label-link.active,
   border-radius: 2px;
   flex-shrink: 0;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 0.5rem;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+  padding: 0.5rem 0.35rem 0.65rem;
   z-index: 2;
 }
 
 .main-page-rect-panel-top-inner {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.1rem;
   width: 100%;
-  padding-top: 0.15rem;
-  padding-bottom: 0.75rem;
 }
 
 /* Rectangle in top right panel: shows logged-in user’s username, color #F5A4C6 */
 /* Username text in top right panel */
 .main-page-rect-panel-top-username-text {
+  flex-shrink: 0;
+  margin-top: 0.45rem;
   font-family: Arial, sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
@@ -567,11 +569,24 @@ a.main-page-object-label-link.active,
   text-align: center;
 }
 
-/* Logged-in user’s avatar under username in top right panel */
+/* Space between username and profile button; centers avatar, slight top bias = nudge down */
+.main-page-rect-panel-top-avatar-middle {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.55rem;
+  box-sizing: border-box;
+}
+
+/* Logged-in user’s avatar in top right panel */
 .main-page-rect-panel-top-avatar {
   width: 132px;
   height: 198px;
-  margin-top: -1.1rem;
+  margin-top: 0;
+  transform: translateY(-0.2rem);
   border-radius: 2px;
   background: transparent;
   overflow: hidden;
@@ -598,9 +613,11 @@ a.main-page-object-label-link.active,
 
 /* Pink “my profile” button under avatar in top right panel */
 .main-page-rect-panel-top-profile-btn {
+  flex-shrink: 0;
   min-width: 150px;
   height: 34px;
-  margin-top: -0.4rem;
+  margin-top: 0.65rem;
+  transform: translateY(-0.72rem);
   padding: 0 1.1rem;
   background: #f5a4c6;
   border-radius: 2px;

@@ -288,12 +288,14 @@ export default function MainPage() {
         <aside className="main-page-rect-panel-top" aria-label="Your profile">
           <div className="main-page-rect-panel-top-inner">
             <span className="main-page-rect-panel-top-username-text">{profile?.username || 'username'}</span>
-            <div className="main-page-rect-panel-top-avatar" aria-hidden>
-              {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt="" className="main-page-rect-panel-top-avatar-img" />
-              ) : (
-                <span className="main-page-rect-panel-top-avatar-placeholder">avatar</span>
-              )}
+            <div className="main-page-rect-panel-top-avatar-middle">
+              <div className="main-page-rect-panel-top-avatar" aria-hidden>
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="" className="main-page-rect-panel-top-avatar-img" />
+                ) : (
+                  <span className="main-page-rect-panel-top-avatar-placeholder">avatar</span>
+                )}
+              </div>
             </div>
             <button
               type="button"
