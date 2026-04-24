@@ -924,17 +924,19 @@
   max-height: calc(100% - 2rem);
 }
 
-/* Username box above avatar: same dimensions as blog box (W 750, H 180) */
+/* Username box above avatar: auto-width to fit username on one line */
 .my-profile-left-box-username {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   top: calc(50% - min(120px, 16vw) - 0.85rem);
-  width: calc(100vw * 750 / 7866);
+  min-width: calc(100vw * 750 / 7866);
+  width: max-content;
+  max-width: calc(100vw - 4rem);
   height: calc(100vh * 180 / 5263);
   background: #f5a4c6;
   color: #ffffdc;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   border-radius: 2px;
   box-sizing: border-box;
   display: flex;
@@ -949,8 +951,6 @@
   font-weight: 600;
   color: #ffffdc;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: block;
 }
 
@@ -1043,10 +1043,13 @@
   border: none;
   border-radius: 2px;
   font-family: Arial, sans-serif;
-  font-size: 0.75rem;
+  font-size: clamp(0.75rem, 1.4vw, 0.95rem);
   font-weight: 600;
   color: #fff;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* One object image per cell; #D4EDF4 when empty */
@@ -1622,7 +1625,7 @@
 .chatroom-user-avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .chatroom-user-avatar-placeholder {
@@ -1648,7 +1651,7 @@
   left: 0;
   top: calc(100% * (1922 - 1916) / 2865);
   width: 100%;
-  height: calc(100% * 210 / 2865);
+  height: calc(100% * 210 / 2859);
   background: #f5a4c6;
   border-radius: 2px;
 }
@@ -1839,7 +1842,7 @@
 .chatroom-avatar-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .chatroom-avatar-placeholder {

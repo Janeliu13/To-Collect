@@ -16,8 +16,11 @@ export default function MainPage() {
   const [users, setUsers] = useState([]);
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [recentMessages, setRecentMessages] = useState([]);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const selectedCategorySlug = searchParams.get('category');
+  const ITEMS_PER_PAGE = 40;
 
   useEffect(() => {
     // Fetch all categories first
@@ -45,25 +48,77 @@ export default function MainPage() {
       });
   }, []);
 
+  // Initial load of gallery objects
   useEffect(() => {
     if (location.pathname !== '/main/gallery') {
       setGalleryObjects([]);
+      setHasMore(true);
       return;
     }
+    
+    const loadInitialObjects = async () => {
+      let query = supabase
+        .from('objects')
+        .select('id, image_url, created_at')
+        .order('created_at', { ascending: false });
+      
+      if (selectedCategorySlug && categories.length) {
+        const cat = categories.find((c) => c.slug === selectedCategorySlug);
+        if (cat) query = query.eq('category_id', cat.id);
+      }
+      
+      query = query.range(0, ITEMS_PER_PAGE - 1);
+      
+      const { data, error } = await query;
+      
+      if (!error && data) {
+        setGalleryObjects(data);
+        setHasMore(data.length === ITEMS_PER_PAGE);
+      } else {
+        setGalleryObjects([]);
+        setHasMore(false);
+      }
+    };
+    
+    loadInitialObjects();
+  }, [location.pathname, selectedCategorySlug, categories]);
+
+  // Load more objects when scrolling
+  const loadMoreObjects = async () => {
+    if (loadingMore || !hasMore || location.pathname !== '/main/gallery') return;
+    
+    setLoadingMore(true);
+    
+    const currentLength = galleryObjects.length;
+    
     let query = supabase
       .from('objects')
-      .select('id, image_url')
-      .order('created_at', { ascending: false })
-      .limit(40);
+      .select('id, image_url, created_at')
+      .order('created_at', { ascending: false });
+    
     if (selectedCategorySlug && categories.length) {
       const cat = categories.find((c) => c.slug === selectedCategorySlug);
       if (cat) query = query.eq('category_id', cat.id);
     }
-    query.then(({ data, error }) => {
-      if (!error && data) setGalleryObjects(data);
-      else setGalleryObjects([]);
-    });
-  }, [location.pathname, selectedCategorySlug, categories]);
+    
+    query = query.range(currentLength, currentLength + ITEMS_PER_PAGE - 1);
+    
+    const { data, error } = await query;
+    
+    if (!error && data && data.length > 0) {
+      // Filter out duplicates by ID (should not happen, but just in case)
+      setGalleryObjects(prev => {
+        const existingIds = new Set(prev.map(obj => obj.id));
+        const newObjects = data.filter(obj => !existingIds.has(obj.id));
+        return [...prev, ...newObjects];
+      });
+      setHasMore(data.length === ITEMS_PER_PAGE);
+    } else {
+      setHasMore(false);
+    }
+    
+    setLoadingMore(false);
+  };
 
   useEffect(() => {
     if (location.pathname !== '/main/users') {
@@ -80,6 +135,33 @@ export default function MainPage() {
         else setUsers([]);
       });
   }, [location.pathname]);
+
+  // Handle scroll event for infinite loading
+  useEffect(() => {
+    if (location.pathname !== '/main/gallery') return;
+
+    const handleScroll = (e) => {
+      const container = e.target;
+      const scrollTop = container.scrollTop;
+      const scrollHeight = container.scrollHeight;
+      const clientHeight = container.clientHeight;
+      
+      // Load more when user scrolls near the bottom (within 200px)
+      if (scrollHeight - scrollTop - clientHeight < 200 && hasMore && !loadingMore) {
+        loadMoreObjects();
+      }
+    };
+
+    const galleryGrid = document.querySelector('.main-page-gallery-grid');
+    const outletContainer = document.querySelector('.main-page-outlet');
+    
+    if (outletContainer) {
+      outletContainer.addEventListener('scroll', handleScroll);
+      return () => {
+        outletContainer.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [location.pathname, hasMore, loadingMore, galleryObjects.length, selectedCategorySlug, categories]);
 
   // Load recent unread messages - show 3 most recent conversations
   useEffect(() => {
@@ -273,15 +355,27 @@ export default function MainPage() {
                   </div>
                 ))
               ) : (
-                galleryObjects.map((obj) => (
-                  <div key={obj.id} className="main-page-gallery-grid-cell">
-                    <Link to={`/main/object/${obj.id}`} className="main-page-gallery-grid-cell-link">
-                      <img src={obj.image_url} alt="" className="main-page-gallery-grid-cell-img" />
-                    </Link>
-                  </div>
-                ))
+                <>
+                  {galleryObjects.map((obj) => (
+                    <div key={obj.id} className="main-page-gallery-grid-cell">
+                      <Link to={`/main/object/${obj.id}`} className="main-page-gallery-grid-cell-link">
+                        <img src={obj.image_url} alt="" className="main-page-gallery-grid-cell-img" />
+                      </Link>
+                    </div>
+                  ))}
+                </>
               )}
             </div>
+            {!isUserGallery && loadingMore && (
+              <div className="main-page-loading-more">
+                Loading more...
+              </div>
+            )}
+            {!isUserGallery && !hasMore && galleryObjects.length > 0 && (
+              <div className="main-page-no-more">
+                {galleryObjects.length} objects
+              </div>
+            )}
             <Outlet />
           </div>
         </div>

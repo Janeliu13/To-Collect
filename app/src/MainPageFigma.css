@@ -282,7 +282,6 @@ a.main-page-object-label-link.active,
   grid-template-columns: repeat(8, 1fr);
   grid-auto-rows: auto;
   gap: 0.5rem;
-  min-height: min(400px, 50vh);
   flex-shrink: 0;
 }
 
@@ -379,7 +378,9 @@ a.main-page-object-label-link.active,
   text-align: center;
   text-decoration: underline;
   margin-top: 0.25rem;
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   max-width: 100%;
 }
 
@@ -586,7 +587,7 @@ a.main-page-object-label-link.active,
   width: 132px;
   height: 198px;
   margin-top: 0;
-  transform: translateY(-0.2rem);
+  transform: translateY(-0.5rem);
   border-radius: 2px;
   background: transparent;
   overflow: hidden;
@@ -1022,5 +1023,34 @@ a.main-page-object-label-link.active,
   justify-content: center;
   color: #666;
   font-size: 0.95rem;
+}
+
+/* Infinite scroll loading indicators */
+.main-page-loading-more,
+.main-page-no-more {
+  padding: 1rem;
+  text-align: center;
+  color: #6EDCFF;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.main-page-loading-more {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.main-page-no-more {
+  color: #B0B0B0;
+  font-style: italic;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
